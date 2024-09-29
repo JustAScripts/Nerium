@@ -30,7 +30,7 @@ def latency() -> float:
     else:
         return 'ping Failed'
 
-def centered(text):
+def centered(text) -> str:
     console_width = os.get_terminal_size().columns
     for line in text.strip().split("\n"):
         print(line.center(console_width))
