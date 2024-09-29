@@ -116,6 +116,17 @@ async def get_userid() -> int:
                 fetch_id = await response.json()
                 return fetch_id.get('id')
 
+async def get_serial(type, asset) -> str:
+    async with aiohttp.ClientSession() as tag:
+        async with tag.get(f'https://inventory.roblox.com/v2/users/{await get_userid()}/inventory/{type}?limit=10&sortOrder=Desc', 
+        cookies={'.ROBLOSECURITY': config['roblox']['cookies']}, ssl=False) as serial:
+            if serial.ok:
+                for item in serial['data']:
+                    if item['assetId'] == asset:
+                        return item['serialNumber']
+                    else:
+                        return 'N/A'
+
 async def economy(asset) -> dict:
     async with aiohttp.ClientSession() as economyInfo:
         async with economyInfo.get(f'https://economy.roblox.com/v2/assets/{asset}/details', ssl=False) as data:
@@ -153,7 +164,7 @@ async def buy_item() -> None:
                     succes_count += 1
                     append_succes(response['Name'])
                     if config['webhook']['url']:
-                        await webhook(response['Name'], 'Successfully Bought', 16761021, response['AssetId'])
+                        await webhook(response['Name'], f'Successfully Bought Serial ``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
                 elif bought.status == 429:
                     print(await bought.text())
                     append_error('Ratelimit', 'buy_item Function')
@@ -243,7 +254,7 @@ async def main() -> None:
                         else:
                             if response['PriceInRobux'] == 0:
                                 for _ in range(1, 5):
-                                     print(response['Name'])
+                                     await buy_item()
                 bar = quux
 
             theme()
@@ -251,3 +262,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+        
