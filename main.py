@@ -151,7 +151,7 @@ async def economy(asset) -> dict:
                 append_error(tc, 'Economy Api Ratelimit')
 
 async def buy_item() -> None:
-    global error_count, succes_count, last_bought
+    global error_count, succes_count, last_bought, bought
     async with aiohttp.ClientSession() as buy:
         async with buy.post(f'https://apis.roblox.com/marketplace-sales/v1/item/{response["CollectibleItemId"]}/purchase-item',
         headers={'x-csrf-token': await get_xcsrf()},
@@ -164,7 +164,7 @@ async def buy_item() -> None:
                     succes_count += 1
                     append_succes(response['Name'])
                     if config['webhook']['url']:
-                        await webhook(response['Name'], f'**Successfully Bought Serial** ``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
+                        await webhook(response['Name'], f'**Successfully Bought Serial** #``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
                 elif bought.status == 429:
                     print(await bought.text())
                     append_error('Ratelimit', 'buy_item Function')
@@ -258,6 +258,9 @@ async def main() -> None:
                             if response['PriceInRobux'] == 0:
                                 for _ in range(1, 5):
                                      await buy_item()
+                                     if bought.status == 429:
+                                         for _ in range(1,5):
+                                             await buy_item()
                 bar = quux
 
 
@@ -265,4 +268,4 @@ async def main() -> None:
 if __name__ == "__main__":
     asyncio.run(main())
 
-        
+    
