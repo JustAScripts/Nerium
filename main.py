@@ -26,9 +26,8 @@ def console_clear() -> None:
 def latency() -> float:
     response = ping('google.com')
     if response is not None:
-        return f"{response * 1000:.2f} ms"
-    else:
-        return 'ping Failed'
+        return f"{response * 1000:.2f}"
+    return 'ping Failed'
 
 def centered(text) -> str:
     console_width = os.get_terminal_size().columns
@@ -44,6 +43,11 @@ def append_error(text, source) -> None:
     with open('error.txt', 'a') as er:
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         er.write(f'{time}\nerror -> {text}\nsource -> {source}\n\n')
+
+def task() -> str:
+    if config['setting']['paid']:
+        return 'Waiting For Paid'
+    return 'Waiting For Web'
 
 async def auth_check() -> None:
     async with aiohttp.ClientSession() as session:
@@ -65,9 +69,6 @@ async def auth_check() -> None:
                     }) as res:
                         if res.ok:
                             print('Webhook Working. Continuing.')
-                        else:
-                            a = await res.text()
-                            print(a)
 
 asyncio.run(auth_check())
 
@@ -77,8 +78,7 @@ async def thumbnail_url(asset) -> str:
             if photo.status == 200:
                 url = await photo.json()
                 return url['data'][0]['imageUrl']
-            else:
-                return 'https://cdn.discordapp.com/attachments/1287218202111246336/1289710777200152647/Picsart_24-09-22_14-27-23-475.png?ex=66f9d042&is=66f87ec2&hm=c9c55840dd6df5cb363a668795ea67607f59228bc0a56c538812de71f620ddeb&'
+            return 'https://cdn.discordapp.com/attachments/1287218202111246336/1289710777200152647/Picsart_24-09-22_14-27-23-475.png?ex=66f9d042&is=66f87ec2&hm=c9c55840dd6df5cb363a668795ea67607f59228bc0a56c538812de71f620ddeb&'
 
 async def webhook(title: str, description: str, color: int, asset: str) -> None:
     async with aiohttp.ClientSession() as dis:
@@ -97,7 +97,7 @@ async def webhook(title: str, description: str, color: int, asset: str) -> None:
                                     }
                                 }]
                             }) as response:
-            print(await response.text())
+                                print(response)
 
 async def get_xcsrf() -> str:
     async with aiohttp.ClientSession() as token:
@@ -119,13 +119,13 @@ async def get_userid() -> int:
 async def get_serial(type, asset) -> str:
     async with aiohttp.ClientSession() as tag:
         async with tag.get(f'https://inventory.roblox.com/v2/users/{await get_userid()}/inventory/{type}?limit=10&sortOrder=Desc', 
-        cookies={'.ROBLOSECURITY': config['roblox']['cookies']}, ssl=False) as serial:
-            if serial.ok:
-                for item in serial['data']:
+        cookies={'.ROBLOSECURITY': config['roblox']['cookies']}, ssl=False) as response:
+            if response.status == 200:
+                data = await response.json()
+                for item in data['data']:
                     if item['assetId'] == asset:
                         return item['serialNumber']
-                    else:
-                        return 'N/A'
+            return 'N/A'
 
 async def economy(asset) -> dict:
     async with aiohttp.ClientSession() as economyInfo:
@@ -164,7 +164,7 @@ async def buy_item() -> None:
                     succes_count += 1
                     append_succes(response['Name'])
                     if config['webhook']['url']:
-                        await webhook(response['Name'], f'Successfully Bought Serial ``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
+                        await webhook(response['Name'], f'**Successfully Bought Serial** ``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
                 elif bought.status == 429:
                     print(await bought.text())
                     append_error('Ratelimit', 'buy_item Function')
@@ -178,9 +178,10 @@ async def buy_item() -> None:
                     if config['webhook']['url']:
                         await webhook(response['Name'], await bought.text(), 8388608, response['AssetId'])
 
-def theme():
-    console_clear()
-    tag = """⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣴⡦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+async def theme() -> None:
+    while True:
+        console_clear()
+        tag = """⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣴⡦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡟⣳⣿⣰⢄⠀⠀⠀⣠⣤⣤⣶⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣉⠷⠿⣾⠁⠀⣼⣿⣿⣿⣿⣿⡃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⢀⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣿⣿⣷⣄⠹⣷⡀⣿⡿⠋⣹⣿⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⣷⣦⡀⠀⠀⠀⠀⠀
@@ -192,17 +193,17 @@ def theme():
 ⠀⠀⠀⠀⠸⣿⣿⣿⣿⡇⠻⠿⠟⠋⠀⠀⠀⠀⠈⠙⠛⠋⠀⣿⣿⣿⣿⣷⣴⣿⣿⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⡿⠀⠈⠉⠀⠀
 ⠀⠀⠀⠀⠀⠻⠿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠿⠿⠿⢿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
-    design = f"""        
+        design = f"""        
 ┌────── ⋆⋅☆⋅⋆ ──────┐
 
 
  INFORMATION
 
- Latency 
+  Latency 
  {latency()}
 
- Runtime 
-      
+ task
+  {task()}
 
 
  ──────────────────
@@ -219,10 +220,10 @@ def theme():
 
   
   Error 
-{error_count}
+ {error_count}
 
   Success 
-{succes_count}
+ {succes_count}
 
 
 └────── ⋆⋅☆⋅⋆ ──────┘
@@ -230,12 +231,14 @@ def theme():
 
 
 """
-    centered(Fore.MAGENTA + Style.BRIGHT + tag)
-    centered(Fore.GREEN + Style.BRIGHT + design)
+        centered(Fore.MAGENTA + Style.BRIGHT + tag)
+        centered(Fore.GREEN + Style.BRIGHT + design)
+        await asyncio.sleep(1)
 
 async def main() -> None:
      global bar, last_detected
      bar = None
+     asyncio.create_task(theme())
      async with aiohttp.ClientSession() as session:
         while True:
             async with session.get("https://pastefy.app/Pq7EfNmH/raw") as paste:
@@ -257,9 +260,9 @@ async def main() -> None:
                                      await buy_item()
                 bar = quux
 
-            theme()
-            await asyncio.sleep(1)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
+
         
