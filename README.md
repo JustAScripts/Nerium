@@ -24,6 +24,13 @@ A sniper for both limited Paid And Web Item you can use it different by configur
 ```
 # Nerium Running Example 
 ![Screenshot_2024-10-03-19-46-35-36_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/55a81ac2-4f5b-49b2-99db-d3e73d590d71)
+# Webhook Successful Bought Response 
+![Screenshot_2024-10-01-21-40-03-05_572064f74bd5f9fa804b05334aa4f912](https://github.com/user-attachments/assets/34c4cef5-826c-449c-a81a-34f1f8af845a)
+
 # Supported
-* 📱 though Termux or other local terminal or Hosting site
-* 💻 through CMD or other Hosting site
+> 📱 though Termux or other local terminal or Hosting site
+> 💻 through CMD or other Hosting site
+
+# [Discord](https://discord.gg/FRUKycbwDJ)
+> Snipe are publicity on channel posted by those who are using the sniper join to always get updated to newest update things on [Sniper](https://discord.gg/FRUKycbwDJ)
+
