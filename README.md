@@ -34,3 +34,6 @@ A sniper for both limited Paid And Web Item you can use it different by configur
 # [Discord](https://discord.gg/FRUKycbwDJ)
 > Snipe are publicity on channel posted by those who are using the sniper join to always get updated to newest update things on [Sniper](https://discord.gg/FRUKycbwDJ)
 
+# Mobile Tutorial 
+**SOON**
+
