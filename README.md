@@ -23,7 +23,7 @@ A sniper for both limited Paid And Web Item you can use it different by configur
 }
 ```
 # Nerium Running Example 
-https://github.com/user-attachments/assets/384da58a-84a2-43bc-b356-76e58b039062
+[run](https://github.com/user-attachments/assets/384da58a-84a2-43bc-b356-76e58b039062)
 # Supported
 * 📱 though Termux or other local terminal or Hosting site
 * 💻 through CMD or other Hosting site
