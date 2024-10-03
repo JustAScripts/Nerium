@@ -1,4 +1,4 @@
-from main import console_clear, latency, task, last_bought, last_detected, error_count, succes_count
+from nerium import console_clear, latency, task, last_bought, last_detected, error_count, succes_count
 import asyncio
 from colorama import Fore, Style
 import os
