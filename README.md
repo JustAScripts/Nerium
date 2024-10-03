@@ -22,3 +22,6 @@ A sniper for both limited Paid And Web Item you can use it different by configur
   }
 }
 ```
+# Supported
+* 📱 though Termux or other local terminal or Hosting site
+* 💻 through CMD or other Hosting site
