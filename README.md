@@ -1,2 +1,2 @@
 **Install Modules**
-> pip install aiohttp colorama ping3
+<span style="color: red;">This text is red!</span>
