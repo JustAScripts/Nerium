@@ -1,11 +1,15 @@
 {
   "roblox": {
     "cookies": ""
-},
+  },
   "setting": {
     "paid": true,
     "price": [50, 65, 75],
-    "limit": 1
+    "limit": 1,
+    "Privacy": {
+      "robux": true,
+      "name": true
+    }
   },
   "webhook": {
     "enable": false,
