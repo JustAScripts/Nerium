@@ -6,8 +6,7 @@
     "paid": true,
     "price": [50, 65, 75],
     "limit": 1,
-    "privacy": {
-      "robux": true,
+    "privacy":{
       "name": true
     }
   },
