@@ -1,6 +1,8 @@
 # Flower Version Nerium Sniper's
 A sniper for both limited Paid And Web Item you can use it different by configuring the [config.json](https://github.com/JustAScripts/Nerium/blob/main/config.json)
 
+## ⚠️ some of example might be different on yours due to frequently update or code expect some got remove and new
+
 ## config Content Example
 ```json
 {
@@ -12,7 +14,6 @@ A sniper for both limited Paid And Web Item you can use it different by configur
     "price": [50, 65, 75],   for paid item prices you want to sniped
     "limit": 1,   for paid limit for how many item you want to buy once it detect paid
     "privacy": {
-      "robux": true,   'false' to anonymous your name
       "name": true   'false' to anonymous your robux
     }
   },
