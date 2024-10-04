@@ -1,7 +1,7 @@
 # Flower Version Nerium Sniper's
 A sniper for both limited Paid And Web Item you can use it different by configuring the [config.json](https://github.com/JustAScripts/Nerium/blob/main/config.json)
 
-## ⚠️ some of example might be different on yours due to frequently update or code expect some got remove and new
+## ⚠️ some of example might be different on yours due to frequently update, expect some got remove and news added
 
 ## config Content Example
 ```json
