@@ -14,7 +14,7 @@ A sniper for both limited Paid And Web Item you can use it different by configur
     "price": [50, 65, 75],   for paid item prices you want to sniped
     "limit": 1,   for paid limit for how many item you want to buy once it detect paid
     "privacy": {
-      "name": true   'false' to anonymous your robux
+      "name": true   'false' to anonymous your Name
     }
   },
   "webhook": {
