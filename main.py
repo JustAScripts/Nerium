@@ -7,11 +7,10 @@ import uuid
 import os
 import colorama
 
-# nensense Verieble
-start_time = time.time()
-
+version= 'Version 2.2'
 error_count = 0
 succes_count = 0
+userName = None
 
 last_bought = None
 last_detected = None
@@ -25,12 +24,17 @@ with open('config.json', 'r') as files:
 
 def console_clear() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
-# connection millisecond latency blah ping
+
 def latency() -> float:
     response = ping('google.com')
     if response is not None:
         return f"{response * 1000:.2f}"
     return 'ping Failed'
+
+def centered(text) -> str:
+    console_width = os.get_terminal_size().columns
+    for line in text.strip().split("\n"):
+        print(line.center(console_width))
 
 def append_succes(name) -> None:
     with open('succes.txt', 'a') as sc:
@@ -48,15 +52,21 @@ def task() -> str:
     return 'Waiting For Web'
 
 async def auth_check() -> None:
+    global userName
     async with aiohttp.ClientSession() as session:
         async with session.get('https://users.roblox.com/v1/users/authenticated',
                                cookies={'.ROBLOSECURITY': config['roblox']['cookies']}, ssl=False) as response:
             if response.status == 200:
+                data = await response.json()
                 print('Cookies Are Valid. Continuing.')
+                if config['setting']['privacy']['name']:
+                    userName = data['name']
+                else:
+                    userName = 'Anonymous'
             else:
                 print('Cookies aren\'t valid. Please recheck them.')
                 sys.exit()
-            
+
             if config['webhook']['enable']:
                 async with aiohttp.ClientSession() as hook:
                     async with hook.post(config['webhook']['url'], json={
@@ -149,7 +159,7 @@ async def economy(asset) -> dict:
                 append_error(tc, 'Economy Api Ratelimit')
 
 async def buy_item() -> None:
-    global error_count, succes_count, last_bought
+    global error_count, succes_count, last_bought, bought
     async with aiohttp.ClientSession() as buy:
         async with buy.post(f'https://apis.roblox.com/marketplace-sales/v1/item/{response["CollectibleItemId"]}/purchase-item',
         headers={'x-csrf-token': await get_xcsrf()},
@@ -162,7 +172,7 @@ async def buy_item() -> None:
                     succes_count += 1
                     append_succes(response['Name'])
                     if config['webhook']['url']:
-                        await webhook(response['Name'], f'**Successfully Bought Serial** ``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
+                        await webhook(response['Name'], f'**Successfully Bought Serial** #``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
                 elif bought.status == 429:
                     print(await bought.text())
                     append_error('Ratelimit', 'buy_item Function')
@@ -176,13 +186,9 @@ async def buy_item() -> None:
                     if config['webhook']['url']:
                         await webhook(response['Name'], await bought.text(), 8388608, response['AssetId'])
 
-async def gui_theme() -> None:
+async def theme() -> None:
     while True:
         console_clear()
-        elapsed_time = time.time() - start_time
-        hours, remainder = divmod(int(elapsed_time), 3600)
-        minutes, seconds = divmod(remainder, 60)
-
         tag = """
 ███╗   ██╗███████╗██████╗ ██╗██╗   ██╗███╗   ███╗
 ████╗  ██║██╔════╝██╔══██╗██║██║   ██║████╗ ████║
@@ -192,46 +198,35 @@ async def gui_theme() -> None:
 ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝     ╚═╝
                                                  
 """
-
         design = f"""
 {Style.BRIGHT}╭──────────────────────────╮{Style.RESET_ALL}
-{Fore.MAGENTA}      INFORMATION     {Style.RESET_ALL}
+{Fore.MAGENTA}        INFORMATION     {Style.RESET_ALL}
 {Style.BRIGHT}├──────────────────────────┤{Style.RESET_ALL}
-
-{Fore.CYAN}Latency: {Fore.YELLOW}{latency()} ms{Style.RESET_ALL}
-{Fore.CYAN}    Task: {Fore.YELLOW}{task()}{Style.RESET_ALL}
-{Fore.CYAN} Run Time: {Fore.YELLOW}{hours}h {minutes}m {seconds}s{Style.RESET_ALL}
-
+{Fore.CYAN}    User: {Fore.YELLOW}{userName}{Style.RESET_ALL}        
 {Style.BRIGHT}├──────────────────────────┤{Style.RESET_ALL}
-
+{Fore.CYAN} Latency: {Fore.YELLOW}{latency()} ms{Style.RESET_ALL}  
+{Fore.CYAN}            Task: {Fore.YELLOW}{task()}{Style.RESET_ALL}       
+{Style.BRIGHT}├──────────────────────────┤{Style.RESET_ALL}
 {Fore.GREEN} Last Bought:  {Fore.WHITE}{last_bought}{Style.RESET_ALL}
-{Fore.GREEN} Last Detected:{Fore.WHITE}{last_detected}{Style.RESET_ALL}
-
+{Fore.GREEN} Last Detected: {Fore.WHITE}{last_detected}{Style.RESET_ALL}
 {Style.BRIGHT}├──────────────────────────┤{Style.RESET_ALL}
-
-{Fore.RED} Errors:      {Fore.WHITE}{error_count}{Style.RESET_ALL}
+{Fore.RED} Errors:      {Fore.WHITE}{error_count}{Style.RESET_ALL} 
 {Fore.GREEN} Successes:   {Fore.WHITE}{succes_count}{Style.RESET_ALL}
-
+{Style.BRIGHT}╰──────────────────────────╯{Style.RESET_ALL}
+{Style.BRIGHT}╭──────────────────────────╮{Style.RESET_ALL}
+{Fore.MAGENTA}        VERSION        {Style.RESET_ALL}
+{Style.BRIGHT}├──────────────────────────┤{Style.RESET_ALL}
+{Fore.CYAN}       {Fore.YELLOW}{version}{Style.RESET_ALL}       
 {Style.BRIGHT}╰──────────────────────────╯{Style.RESET_ALL}
 """
-
-        terminal_width = os.get_terminal_size().columns
-        tag_lines = tag.splitlines()
-        design_lines = design.splitlines()
-
-        for line in tag_lines:
-            print(line.center(terminal_width))
-
-        for line in design_lines:
-            print(line.center(terminal_width))
-
+        centered(Style.BRIGHT + tag)
+        centered(design)
         await asyncio.sleep(1)
 
 async def main() -> None:
     global bar, last_detected
     bar = None
-    asyncio.create_task(await gui_theme())
-    
+    asyncio.create_task(theme())
     async with aiohttp.ClientSession() as session:
         while True:
             try:
@@ -239,26 +234,27 @@ async def main() -> None:
                     qux = json.loads(await paste.text())
                     quux = qux['Paid']['id'] if config['setting']['paid'] else qux['Web']['id']
 
-                if bar is not None and quux != bar:
-                    print(quux)
-                    await economy(quux)
-                    last_detected = quux
-                    
-                    if config['setting']['paid']:
-                        if qux['PriceInRobux'] in config['setting']['price']:
-                            for _ in range(config['setting']['limit']):
-                                await buy_item()
-                    else:
-                        if qux['PriceInRobux'] == 0:
-                            for _ in range(5):
-                                await buy_item()
+                    if bar is not None and quux != bar:
+                        if 2 > 1:
+                            print(quux)
+                            await economy(quux)
+                            last_detected = quux
+                            if config['setting']['paid']:
+                                if response['PriceInRobux'] in config['setting']['price']:
+                                    for _ in range(1, 1 + config['setting']['limit']):
+                                        await buy_item()
+                            else:
+                                if response['PriceInRobux'] == 0:
+                                    for _ in range(1, 5):
+                                        await buy_item()
+                                        if bought.status == 429:
+                                            for _ in range(1, 5):
+                                                await buy_item()
+                         
                 bar = quux
             except asyncio.TimeoutError:
-                append_error('ERROR', 'Timeout Error Due to suddenly lose connection.')
-            except Exception as e:
-                append_error('ERROR', str(e))
+                pass
+
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-        
