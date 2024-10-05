@@ -170,8 +170,7 @@ async def economy(asset) -> dict:
                     await webhook(await get_name(asset), '**Failed**\n\nCannot buy the item due to lack of detail.\n\nReason: ``Rate limit economy API``', 8388608, asset)
                 return {}
 
-
-async def buy_item() -> None:
+async def buy_item():
     global error_count, succes_count, last_bought
     async with aiohttp.ClientSession() as buy:
         async with buy.post(
@@ -184,16 +183,17 @@ async def buy_item() -> None:
             buy_response = await bought.json()
 
             if buy_response.get('purchased', False):
-                last_bought = response['Name']
-                succes_count += 1
-                append_succes(response['Name'])
-                if config['webhook']['url'] and config['webhook']['message']['succes']:
-                    await webhook(
-                        response['Name'],
-                        f'**Successfully Bought Serial** #``{await get_serial(response["AssetTypeId"], response["AssetId"])}``',
-                        16761021,
-                        response['AssetId']
-                    )
+                if last_bought != response['Name']:
+                    last_bought = response['Name']
+                    succes_count += 1
+                    append_succes(response['Name'])
+                    if config['webhook']['url'] and config['webhook']['message']['succes']:
+                        await webhook(
+                            response['Name'],
+                            f'**Successfully Bought Serial** #``{await get_serial(response["AssetTypeId"], response["AssetId"])}``',
+                            16761021,
+                            response['AssetId']
+                        )
             elif bought.status == 429:
                 error_message = await bought.text()
                 print(error_message)
@@ -207,9 +207,10 @@ async def buy_item() -> None:
                 error_count += 1
                 append_error(error_message, 'Buy_item function')
                 if config['webhook']['url'] and config['webhook']['message']['error']:
-                    await webhook(response['Name'], error_message, 8388608, response['AssetId'])                    
-                        
+                    await webhook(response['Name'], error_message, 8388608, response['AssetId'])
 
+            return bought    
+                        
 async def theme() -> None:
     while True:
         console_clear()
@@ -279,7 +280,7 @@ async def main() -> None:
                                     if bought.status == 429:
                                         for _ in range(4):
                                             await buy_item()
-                            else:
+
                                 append_error('Prices', 'Price doesn\'t match')
                                 if config['webhook']['url'] and config['webhook']['message']['error']:
                                     await webhook(await get_name(quux), 'Price Doesn\'t match, continue watching.', 8388608, int(quux))
@@ -291,3 +292,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+                                        
