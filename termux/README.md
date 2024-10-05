@@ -42,5 +42,7 @@ git clone https://github.com/JustAScripts/Nerium.git
 ```json
 cd Nerium
 ```
-* after getting in 
+* after getting in Type in command ``ls`` to confirm it and results should be similar to mine
+![Screenshot_2024-10-05-21-44-32-65_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/f354a20d-6f4d-4a47-b4f1-415a6fcde028)
+
 
