@@ -92,3 +92,5 @@ nano config.json
 python main.py
 ```
 * run this to run the code
+![Screenshot_2024-10-05-22-08-37-19_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/8e563b9c-e0a6-4ed8-a8d2-16e6a08a2cf8)
+
