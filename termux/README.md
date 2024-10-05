@@ -34,4 +34,13 @@ apt upgrade && update
 * after running it should gonna ask you ``Y/N`` always ``Y`` at everything and the appearing text should be long if you did all step properly and got same results as what i am saying then your good move to Cloning the git else please go in server and Open ticket.
 
 # Cloning repository 
+Run the following command 
+```json
+git clone https://github.com/JustAScripts/Nerium.git
+```
+* After running the command we gonna open the repository we just clone by running the following command
+```json
+cd Nerium
+```
+* after getting in 
 
