@@ -43,6 +43,14 @@ git clone https://github.com/JustAScripts/Nerium.git
 cd Nerium
 ```
 * after getting in Type in command ``ls`` to confirm it and results should be similar to mine
+
 ![Screenshot_2024-10-05-21-44-32-65_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/f354a20d-6f4d-4a47-b4f1-415a6fcde028)
+> let's now move to installing Modules.
 
-
+# Installing Modules
+* run the following command
+```json
+pip install aiohttp colorama
+```
+![Screenshot_2024-10-05-21-49-22-66_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/bef36b78-8692-4741-84af-841b8d6e0e2b)
+* after running command there should be long ass text keep appearing and keep asking `Y/N` always do `Y`, After all done installing 
