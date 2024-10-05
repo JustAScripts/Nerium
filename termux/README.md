@@ -53,6 +53,7 @@ cd Nerium
 pip install aiohttp colorama ping3
 ```
 * i forgot to add ``ping3`` in photo
+
 ![Screenshot_2024-10-05-21-49-22-66_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/bef36b78-8692-4741-84af-841b8d6e0e2b)
 * **after running command there should be long ass text keep appearing and keep asking `Y/N` always do `Y` after it prompt successful install Let's move on Editing your config!**
 
