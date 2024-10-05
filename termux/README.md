@@ -9,8 +9,8 @@
 - **5**: _Config JSON Editing_
 - **6**: _Saving Nano Files_
 - **7**: _Finishing Touch_
-- 
-> Got unmention error? open ticket in [Flower Limited](https://discord.gg/hrzajNCU)
+
+> Got unmention error? open ticket in [Flower Limited](https://discord.gg/yX2nXu2Upp)
 
 # Installing Dependencies 
 **installing the pkg `python`, `git` and `apt`**
