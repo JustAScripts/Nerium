@@ -66,6 +66,7 @@ nano config.json
 ![Screenshot_2024-10-05-21-54-24-53](https://github.com/user-attachments/assets/2bb48d33-2178-48bf-979d-b03409e42297)
 
 # Saving Nano Files
+* **After Filling necessary from Config.json time for you to save it by doing this tricky step**
 ![IMG_20241005_220044](https://github.com/user-attachments/assets/5d4b3685-1f7d-4b2c-bee8-ff3aa844863f)
 
 * and for finishing Touch
