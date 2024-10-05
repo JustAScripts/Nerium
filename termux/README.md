@@ -53,4 +53,25 @@ cd Nerium
 pip install aiohttp colorama
 ```
 ![Screenshot_2024-10-05-21-49-22-66_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/bef36b78-8692-4741-84af-841b8d6e0e2b)
-* after running command there should be long ass text keep appearing and keep asking `Y/N` always do `Y`, After all done installing 
+* after running command there should be long ass text keep appearing and keep asking `Y/N` always do `Y` after it prompt successful install Let's move on Editing your config!
+
+# Config Json Editing 
+* Open your config.json files by running following command
+```json
+nano config.json
+```
+* Now Move how you can configure your setting 
+
+* Very self explanatory or just higher your reading comprehension and you gonna get it immediately
+![Screenshot_2024-10-05-21-54-24-53](https://github.com/user-attachments/assets/2bb48d33-2178-48bf-979d-b03409e42297)
+
+* after Filling necessary info you can leave now on ``Nano`` by doing this
+![IMG_20241005_220044](https://github.com/user-attachments/assets/5d4b3685-1f7d-4b2c-bee8-ff3aa844863f)
+
+* and for finishing Touch
+
+# Finishing Touch
+```json
+python main.py
+```
+* run this to run the code
