@@ -1,7 +1,16 @@
 # Termux Set-up Storage 
 **step by step** so please read it carefully and use common sense and some common knowledge higher your reading comprehension to avoid confusion or leading code not to work.
 
+# Table Of Content 
+**1** : _Installing Dependencies_
+**2** : _Upgrading to latest version_
+**3** : _Cloning repository_
+**4** : _Installing Modules_
+**5** : _Config Json Editing_
+**6** : _Saving Nano Files_
+**7** : _Finishing Touch_
 
+> Got unmention error? open ticket in [Flower Limited](https://discord.gg/hrzajNCU)
 
 # Installing Dependencies 
 **installing the pkg `python`, `git` and `apt`**
