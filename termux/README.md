@@ -12,4 +12,4 @@ pkg install python git apt
 
 ![Screenshot_2024-10-05-21-22-03-91_84d3000e3f4017145260f7618db1d683](https://github.com/user-attachments/assets/2058c2d2-0ea0-4b53-8d19-aaad8a210ec4)
 
-
+* after all done and the text stop appearing it indicate you downloaded all things good let's move now to another step upgrading all things to latest version to avoid any complict on upcoming installing modules.
