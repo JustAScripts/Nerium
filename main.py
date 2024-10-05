@@ -7,7 +7,7 @@ import uuid
 import os
 import colorama
 
-version= 'Version 2.2'
+version= 'Version 2.3'
 error_count = 0
 succes_count = 0
 userName = None
@@ -71,7 +71,7 @@ async def auth_check() -> None:
                 async with aiohttp.ClientSession() as hook:
                     async with hook.post(config['webhook']['url'], json={
                         "embeds": [{
-                            "description": "*Successfully set up*\n\n*This webhook will notify when an error occurs or successful purchases happen",
+                            "description": "Webhooks Now will wait for request.",
                             "color": 3066993
                         }]
                     }) as res:
@@ -135,11 +135,20 @@ async def get_serial(type, asset) -> str:
                         return item['serialNumber']
             return 'N/A'
 
+async def get_name(asset) -> str:
+    global datas
+    async with aiohttp.ClientSession() as name:
+        async with name.get(f'https://economy.roblox.com/v2/developer-products/{asset}/info', ssl=False) as response:
+            if response.status == 200:
+                datas = await response.json()
+                return datas['Name']
+            return str(asset)
+
 async def economy(asset) -> dict:
+    global response, payload, error_count
     async with aiohttp.ClientSession() as economyInfo:
         async with economyInfo.get(f'https://economy.roblox.com/v2/assets/{asset}/details', ssl=False) as data:
             if data.status == 200:
-                global response, payload, error_count
                 response = await data.json()
                 payload = {
                     "collectibleItemId": str(response['CollectibleItemId']),
@@ -157,34 +166,49 @@ async def economy(asset) -> dict:
                 tc = await data.text()
                 error_count += 1
                 append_error(tc, 'Economy Api Ratelimit')
+                if config['webhook']['url'] and config['webhook']['message']['error']:
+                    await webhook(await get_name(asset), '**Failed**\n\nCannot buy the item due to lack of detail.\n\nReason: ``Rate limit economy API``', 8388608, asset)
+                return {}
+
 
 async def buy_item() -> None:
-    global error_count, succes_count, last_bought, bought
+    global error_count, succes_count, last_bought
     async with aiohttp.ClientSession() as buy:
-        async with buy.post(f'https://apis.roblox.com/marketplace-sales/v1/item/{response["CollectibleItemId"]}/purchase-item',
-        headers={'x-csrf-token': await get_xcsrf()},
-        cookies={'.ROBLOSECURITY': config['roblox']['cookies']},
-            json=payload) as bought:
-                buy_it_fuck = await bought.json()
-                if buy_it_fuck['purchased']:
-                    res = await bought.text()
-                    last_bought = response['Name']
-                    succes_count += 1
-                    append_succes(response['Name'])
-                    if config['webhook']['url']:
-                        await webhook(response['Name'], f'**Successfully Bought Serial** #``{await get_serial(response["AssetTypeId"], response["AssetId"])}``', 16761021, response['AssetId'])
-                elif bought.status == 429:
-                    print(await bought.text())
-                    append_error('Ratelimit', 'buy_item Function')
-                    error_count += 1
-                    if config['webhook']['url']:
-                        await webhook(response['Name'], '``Ratelimit Retrying.``', 8388608, response['AssetId'])
-                else:
-                    print(await bought.text())
-                    error_count += 1
-                    append_error(await bought.text(), 'Buy_item function')
-                    if config['webhook']['url']:
-                        await webhook(response['Name'], await bought.text(), 8388608, response['AssetId'])
+        async with buy.post(
+            f'https://apis.roblox.com/marketplace-sales/v1/item/{response["CollectibleItemId"]}/purchase-item',
+            headers={'x-csrf-token': await get_xcsrf()},
+            cookies={'.ROBLOSECURITY': config['roblox']['cookies']},
+            json=payload, 
+            ssl=False
+        ) as bought:
+            buy_response = await bought.json()
+
+            if buy_response.get('purchased', False):
+                last_bought = response['Name']
+                succes_count += 1
+                append_succes(response['Name'])
+                if config['webhook']['url'] and config['webhook']['message']['succes']:
+                    await webhook(
+                        response['Name'],
+                        f'**Successfully Bought Serial** #``{await get_serial(response["AssetTypeId"], response["AssetId"])}``',
+                        16761021,
+                        response['AssetId']
+                    )
+            elif bought.status == 429:
+                error_message = await bought.text()
+                print(error_message)
+                append_error('Ratelimit', 'buy_item Function')
+                error_count += 1
+                if config['webhook']['url'] and config['webhook']['message']['error']:
+                    await webhook(response['Name'], '``Ratelimit Retrying.``', 8388608, response['AssetId'])
+            else:
+                error_message = await bought.text()
+                print(error_message)
+                error_count += 1
+                append_error(error_message, 'Buy_item function')
+                if config['webhook']['url'] and config['webhook']['message']['error']:
+                    await webhook(response['Name'], error_message, 8388608, response['AssetId'])                    
+                        
 
 async def theme() -> None:
     while True:
@@ -230,31 +254,40 @@ async def main() -> None:
     async with aiohttp.ClientSession() as session:
         while True:
             try:
-                async with session.get("https://pastefy.app/Pq7EfNmH/raw") as paste:
-                    qux = json.loads(await paste.text())
+                async with session.get("https://pastefy.app/Pq7EfNmH/raw", ssl=False) as paste:
+                    try:
+                        qux = json.loads(await paste.text())
+                    except json.JSONDecodeError:
+                        continue
+
                     quux = qux['Paid']['id'] if config['setting']['paid'] else qux['Web']['id']
 
                     if bar is not None and quux != bar:
-                        if 2 > 1:
-                            print(quux)
-                            await economy(quux)
-                            last_detected = quux
-                            if config['setting']['paid']:
-                                if response['PriceInRobux'] in config['setting']['price']:
-                                    for _ in range(1, 1 + config['setting']['limit']):
-                                        await buy_item()
-                            else:
-                                if response['PriceInRobux'] == 0:
-                                    for _ in range(1, 5):
-                                        await buy_item()
-                                        if bought.status == 429:
-                                            for _ in range(1, 5):
-                                                await buy_item()
-                         
-                bar = quux
-            except asyncio.TimeoutError:
-                pass
+                        print(quux)
+                        last_detected = await get_name(quux)
 
+                        if config['setting']['paid']:
+                            await economy(quux)
+                            if response['PriceInRobux'] in config['setting']['price']:
+                                for _ in range(config['setting']['limit']):
+                                    await buy_item()
+                        else:
+                            await economy(quux)
+                            if response['PriceInRobux'] == 0:
+                                for _ in range(4):
+                                    bought = await buy_item()
+                                    if bought.status == 429:
+                                        for _ in range(4):
+                                            await buy_item()
+                            else:
+                                append_error('Prices', 'Price doesn\'t match')
+                                if config['webhook']['url'] and config['webhook']['message']['error']:
+                                    await webhook(await get_name(quux), 'Price Doesn\'t match, continue watching.', 8388608, int(quux))
+
+                    bar = quux
+
+            except asyncio.TimeoutError:
+                continue
 
 if __name__ == "__main__":
     asyncio.run(main())
