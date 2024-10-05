@@ -19,7 +19,10 @@ A sniper for both limited Paid And Web Item you can use it different by configur
   },
   "webhook": {
     "enable": false,   set to 'true' if you want to get notified on your Webhook 
-    "url": ""   Webhook to be notified 
+    "url": ""   Webhook to be notified
+    "message": {
+      "success": true,  send the successful bought message 
+      "error": true  send the error message if u `False` it won't not gonna send error on Webhook 
   }
 }
 ```
